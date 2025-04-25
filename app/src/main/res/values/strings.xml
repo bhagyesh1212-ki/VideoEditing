@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">VideoEditingApp</string>
+    <string name="camera">Camera</string>
+    <string name="search_music">Search music</string>
+    <string name="for_you">For you</string>
+    <string name="see_all">See All</string>
+    <string name="assi_sajna">Assi Sajna</string>
+    <string name="jasleen_royal">Jasleen Royal</string>
+    <string name="original_audio">Original audio</string>
+    <string name="choose_the_part_you_want_for_your_reel">Choose the part you want for your reel.</string>
+    <string name="_20s">20s</string>
+    <string name="trim_and_use">Trim and Use</string>
+    <string name="song_name">song name</string>
+    <string name="timer">Timer</string>
+    <string name="countdown">Countdown</string>
+    <string name="set_the_length_of_your_recording">Set the length of your recording</string>
+    <string name="set_timer">Set Timer</string>
+    <string name="_3s">3s</string>
+    <string name="_3">3</string>
+    <string name="next"><![CDATA[Next  ->]]></string>
+    <string name="_0s">0s</string>
+    <string name="_8s">8s</string>
+    <string name="_15s">15s</string>
+    <string name="next1">Next</string>
+    <string name="video_duration">Video duration:</string>
+    <string name="_0_13s">0.13s</string>
+</resources>

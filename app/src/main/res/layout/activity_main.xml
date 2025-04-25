@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.MainActivity">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_close" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="22dp"
+        android:layout_marginTop="150dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgMusic"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_music" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgFilter"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_stars" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_speed" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgWatch"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_time" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_flashoff" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/countDown"
+        android:visibility="gone"
+        android:layout_width="120dp"
+        android:layout_height="140dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center">
+
+        <com.one.videoeditingapp.ui.CountdownBorderView
+            android:id="@+id/borderView"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp" />
+
+        <TextView
+            android:id="@+id/countText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/inter_semibold"
+            android:text="@string/_3"
+            android:textColor="#FFFFFF"
+            android:textSize="90sp" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/ryFilter"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/lyCamera"
+        android:visibility="gone"
+        android:layout_marginBottom="30dp"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCenterRing"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:src="@drawable/bg_filtercenterring"
+            android:layout_centerInParent="true" />
+
+
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/captureButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@+id/lyCamera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/ic_stoprecording" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next"
+        android:visibility="gone"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:layout_marginStart="26dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/bg_trimanduse_button"
+        android:paddingVertical="9dp"
+        android:paddingHorizontal="12dp"
+        android:fontFamily="@font/inter_semibold"
+        android:layout_above="@+id/lyCamera"
+        android:layout_toEndOf="@+id/captureButton"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgCloseFilter"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_above="@+id/lyCamera"
+        android:layout_below="@+id/captureButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="5dp"
+        android:src="@drawable/ic_close"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/lyCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="22dp"
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="26dp"
+            android:layout_height="23dp"
+            android:src="@drawable/ic_albums" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:text="@string/camera"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:fontFamily="@font/inter_medium" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgReverseCamera"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_refresh" />
+    </LinearLayout>
+</RelativeLayout>
