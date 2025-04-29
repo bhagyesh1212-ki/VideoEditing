@@ -66,7 +66,6 @@ class MusicAdapter(val context: Context, val musicList: ArrayList<MusicModel>) :
                 i.putExtra("SongName", musicModel.songName)
                 i.putExtra("SongUri", musicModel.songUri.toString())
                 context.startActivity(i)
-
             }
         }
     }

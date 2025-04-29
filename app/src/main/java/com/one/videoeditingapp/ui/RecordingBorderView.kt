@@ -9,17 +9,17 @@ import android.graphics.PathMeasure
 import android.util.AttributeSet
 import android.view.View
 
-class CountdownBorderView @JvmOverloads constructor(
+class RecordingBorderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    private val cornerRadius: Float = 12f
+    private val cornerRadius: Float = 100f
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         style = Paint.Style.STROKE
-        strokeWidth = 15f
-        strokeCap = Paint.Cap.SQUARE
+        strokeWidth = 4f
+        strokeCap = Paint.Cap.ROUND
     }
 
     private val path = Path()
@@ -43,7 +43,7 @@ class CountdownBorderView @JvmOverloads constructor(
 
         path.reset()
 
-//        // 👇 START FROM TOP-RIGHT corner and move clockwise
+//        START FROM TOP-RIGHT corner and move clockwise
 //        path.moveTo(right, top)
 //        path.lineTo(left, top) // Right
 //        path.lineTo(left, bottom)  // Bottom

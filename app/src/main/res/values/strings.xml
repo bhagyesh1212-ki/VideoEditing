@@ -24,4 +24,7 @@
     <string name="next1">Next</string>
     <string name="video_duration">Video duration:</string>
     <string name="_0_13s">0.13s</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep editing</string>
+    <string name="save_draft">Save draft</string>
 </resources>

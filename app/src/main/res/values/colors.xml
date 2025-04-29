@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grid_line">#66ffffff</color>
+    <color name="waveform_selected">@color/white</color>
+    <color name="waveform_unselected_bkgnd_overlay">#1A000000</color>
+    <color name="selection_border">#ffffff</color>
+    <color name="waveform_unselected">#80999999</color>
+    <color name="playback_indicator">#ffff66</color>
+    <color name="timecode">#ddffffdd</color>
+
+
 </resources>

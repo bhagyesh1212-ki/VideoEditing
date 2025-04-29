@@ -19,9 +19,6 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.daasuu.gpuv.camerarecorder.CameraRecordListener
 import com.daasuu.gpuv.camerarecorder.GPUCameraRecorder
 import com.daasuu.gpuv.camerarecorder.GPUCameraRecorderBuilder
@@ -43,9 +40,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.one.videoeditingapp.R
 import com.one.videoeditingapp.databinding.ActivityMainBinding
 import com.one.videoeditingapp.databinding.BottomSheetDialogBinding
+import com.one.videoeditingapp.databinding.BottomSheetStopRecordingBinding
 import com.one.videoeditingapp.model.CountDownModel
 import com.one.videoeditingapp.model.FilterModel
+import com.yarolegovich.discretescrollview.DiscreteScrollView
+import com.yarolegovich.discretescrollview.transform.Pivot
+import com.yarolegovich.discretescrollview.transform.ScaleTransformer
 import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private var isFilterOpen: Boolean = false
     private var listCountDown: ArrayList<CountDownModel>? = null
     private var isRotateToSelfie: Boolean = false
+    private var isFlashOn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,52 +80,64 @@ class MainActivity : AppCompatActivity() {
         binding.imgFilter.setOnClickListener {
             isFilterOpen = !isFilterOpen
             if (isFilterOpen) {
-                binding.captureButton.visibility = View.GONE
+                binding.fyCapture.visibility = View.GONE
                 binding.imgCloseFilter.visibility = View.VISIBLE
                 binding.ryFilter.visibility = View.VISIBLE
                 binding.tvNext.visibility = View.GONE
             } else {
-                binding.captureButton.visibility = View.VISIBLE
+                binding.fyCapture.visibility = View.VISIBLE
                 binding.imgCloseFilter.visibility = View.GONE
                 binding.ryFilter.visibility = View.GONE
             }
         }
 
         binding.imgCloseFilter.setOnClickListener {
-            binding.captureButton.visibility = View.VISIBLE
+            isFilterOpen = false
+            binding.fyCapture.visibility = View.VISIBLE
             binding.imgCloseFilter.visibility = View.GONE
             binding.ryFilter.visibility = View.GONE
         }
 
         binding.imgMusic.setOnClickListener {
             startActivity(Intent(this, MusicActivity::class.java))
-            binding.captureButton.visibility = View.VISIBLE
+            binding.fyCapture.visibility = View.VISIBLE
             binding.imgCloseFilter.visibility = View.GONE
             binding.ryFilter.visibility = View.GONE
         }
 
         binding.imgWatch.setOnClickListener {
-            binding.captureButton.visibility = View.VISIBLE
-            binding.rcvFilter.visibility = View.GONE
+            binding.fyCapture.visibility = View.VISIBLE
+            binding.ryFilter.visibility = View.GONE
             binding.imgCloseFilter.visibility = View.GONE
             openTimerDialog()
         }
 
-        binding.captureButton.setOnClickListener {
+        binding.fyCapture.setOnClickListener {
             startOrStopRecording()
         }
 
         binding.imgReverseCamera.setOnClickListener {
             isRotateToSelfie = !isRotateToSelfie
-            if (isRotateToSelfie) {
-                startCameraWithGPURecorderSelfie()
+            startCameraWithGPURecorder()
+        }
+
+        binding.imgFlash.setOnClickListener {
+            isFlashOn = !isFlashOn
+            if (isFlashOn) {
+                binding.imgFlash.setImageResource(R.drawable.ic_flashon)
             } else {
-                startCameraWithGPURecorder()
+                binding.imgFlash.setImageResource(R.drawable.ic_flashoff)
             }
+            gpuCameraRecorder.switchFlashMode();
+        }
+
+        binding.imgClose.setOnClickListener {
+            stopRecordingBottomSheet()
         }
     }
 
-    /******************************************** function ********************************************/
+    /******************************************** function **************************************************/
+
     /******************************************** Filter rcv set ********************************************/
 
     private fun setFilterRecycler() {
@@ -140,53 +155,43 @@ class MainActivity : AppCompatActivity() {
         listFilter!!.add(FilterModel(R.drawable.demo_filter))
         listFilter!!.add(FilterModel(R.drawable.demo_filter))
         listFilter!!.add(FilterModel(R.drawable.demo_filter))
-
         val adapter = FilterAdapter(this, listFilter!!)
         binding.rcvFilter.adapter = adapter
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.rcvFilter.layoutManager = layoutManager
-        val itemWidth = resources.getDimensionPixelSize(R.dimen.filter_item_width)
-        val sidePadding = (resources.displayMetrics.widthPixels / 2) - (itemWidth /2)
-        binding.rcvFilter.setPadding(sidePadding, 0, sidePadding, 0)
-        binding.rcvFilter.clipToPadding = false
 
-        binding.rcvFilter.post {
-            layoutManager.scrollToPositionWithOffset(0, sidePadding)
-        }
+        binding.rcvFilter.setItemTransformer(
+            ScaleTransformer.Builder()
+                .setMaxScale(1.0f)
+                .setMinScale(0.8f)
+                .setPivotX(Pivot.X.CENTER) // CENTER is a default one
+                .setPivotY(Pivot.Y.CENTER) // CENTER is a default one
+                .build()
+        )
 
+        val scrollView = binding.rcvFilter as DiscreteScrollView
+        scrollView.adapter = adapter
+        binding.rcvFilter.scrollToPosition(0)
 
-        val snapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(binding.rcvFilter)
-
-        binding.rcvFilter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val snapView = snapHelper.findSnapView(layoutManager)
-                    snapView?.let {
-                        val position = layoutManager.getPosition(it)
-                        when (position) {
-                            0 -> gpuCameraRecorder.setFilter(GlFilter())
-                            1 -> gpuCameraRecorder.setFilter(GlBilateralFilter())
-                            2 -> gpuCameraRecorder.setFilter(GlBoxBlurFilter())
-                            3 -> gpuCameraRecorder.setFilter(GlBrightnessFilter())
-                            4 -> gpuCameraRecorder.setFilter(GlContrastFilter())
-                            5 -> gpuCameraRecorder.setFilter(GlSepiaFilter())
-                            6 -> gpuCameraRecorder.setFilter(GlVignetteFilter())
-                            7 -> gpuCameraRecorder.setFilter(GlInvertFilter())
-                            8 -> gpuCameraRecorder.setFilter(GlMonochromeFilter())
-                            9 -> gpuCameraRecorder.setFilter(GlSaturationFilter())
-                            10 -> gpuCameraRecorder.setFilter(GlGaussianBlurFilter())
-                            11 -> gpuCameraRecorder.setFilter(GlGrayScaleFilter())
-                            12 -> gpuCameraRecorder.setFilter(GlSharpenFilter())
-                        }
-                    }
-                }
+        scrollView.addOnItemChangedListener { viewHolder, adapterPosition ->
+            // Update your filter based on the selected position
+            when (adapterPosition) {
+                0 -> gpuCameraRecorder.setFilter(GlFilter())
+                1 -> gpuCameraRecorder.setFilter(GlBilateralFilter())
+                2 -> gpuCameraRecorder.setFilter(GlBoxBlurFilter())
+                3 -> gpuCameraRecorder.setFilter(GlBrightnessFilter())
+                4 -> gpuCameraRecorder.setFilter(GlContrastFilter())
+                5 -> gpuCameraRecorder.setFilter(GlSepiaFilter())
+                6 -> gpuCameraRecorder.setFilter(GlVignetteFilter())
+                7 -> gpuCameraRecorder.setFilter(GlInvertFilter())
+                8 -> gpuCameraRecorder.setFilter(GlMonochromeFilter())
+                9 -> gpuCameraRecorder.setFilter(GlSaturationFilter())
+                10 -> gpuCameraRecorder.setFilter(GlGaussianBlurFilter())
+                11 -> gpuCameraRecorder.setFilter(GlGrayScaleFilter())
+                12 -> gpuCameraRecorder.setFilter(GlSharpenFilter())
             }
-        })
+        }
     }
 
-    /****************************************************************************************/
+    /************************************************************************************************************************/
     /******************************************** permission for camera and audio ********************************************/
 
     private fun requestStoragePermissions() {
@@ -243,7 +248,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    /****************************************************************************************/
+    /********************************************************************************************************/
     /******************************************** Camera recoding ********************************************/
 
     private fun startCameraWithGPURecorder() {
@@ -257,12 +262,13 @@ class MainActivity : AppCompatActivity() {
         binding.previewView.addView(glSurfaceView)
 
         gpuCameraRecorder = GPUCameraRecorderBuilder(this, glSurfaceView)
-            .lensFacing(LensFacing.BACK)
+            .lensFacing(if (isRotateToSelfie) LensFacing.FRONT else LensFacing.BACK)
             .videoSize(720, 1280)
             .recordNoFilter(false)
             .cameraRecordListener(object : CameraRecordListener {
                 override fun onGetFlashSupport(flashSupport: Boolean) {}
                 override fun onRecordComplete() {
+                    binding.progressBar.visibility = View.VISIBLE
                     isRecording = false
                 }
 
@@ -274,42 +280,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onCameraThreadFinish() {}
                 override fun onVideoFileReady() {
                     runOnUiThread {
-                        binding.tvNext.visibility = View.VISIBLE
-                    }
-                }
-            })
-            .build()
-        gpuCameraRecorder.setFilter(GlFilter())
-    }
-
-    private fun startCameraWithGPURecorderSelfie() {
-        glSurfaceView = GLSurfaceView(this)
-
-        if (glSurfaceView.parent != null) {
-            (glSurfaceView.parent as ViewGroup).removeView(glSurfaceView)
-        }
-
-        binding.previewView.removeAllViews()
-        binding.previewView.addView(glSurfaceView)
-
-        gpuCameraRecorder = GPUCameraRecorderBuilder(this, glSurfaceView)
-            .lensFacing(LensFacing.FRONT)
-            .videoSize(720, 1280)
-            .recordNoFilter(false)
-            .cameraRecordListener(object : CameraRecordListener {
-                override fun onGetFlashSupport(flashSupport: Boolean) {}
-                override fun onRecordComplete() {
-                    isRecording = false
-                }
-
-                override fun onRecordStart() {
-                    isRecording = true
-                }
-
-                override fun onError(exception: Exception?) {}
-                override fun onCameraThreadFinish() {}
-                override fun onVideoFileReady() {
-                    runOnUiThread {
+                        binding.progressBar.visibility = View.GONE
                         binding.tvNext.visibility = View.VISIBLE
                     }
                 }
@@ -321,19 +292,20 @@ class MainActivity : AppCompatActivity() {
     private fun startOrStopRecording() {
         if (isRecording) {
             gpuCameraRecorder.stop()
-            binding.captureButton.setImageResource(R.drawable.ic_stoprecording)
+            binding.captureButton.setImageResource(R.drawable.bg_capturebutton)
+            binding.recordingBorderView.setProgress(1f)
             isRecording = false
         } else {
             val videoFile = File(cacheDir, "video_${System.currentTimeMillis()}.mp4")
             gpuCameraRecorder.start(videoFile.absolutePath)
-            binding.captureButton.setImageResource(R.drawable.ic_startrecording)
+            binding.captureButton.setImageResource(R.drawable.bg_startcapturebtn)
             isRecording = true
             binding.tvNext.visibility = View.GONE
             lastRecordedFile = videoFile
         }
     }
 
-    /****************************************************************************************/
+    /*****************************************************************************************************/
     /******************************************** Timer Dialog ********************************************/
 
     private fun openTimerDialog() {
@@ -374,7 +346,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /****************************************************************************************/
+    /*************************************************************************************************************/
+    /******************************************** startSmoothCountdown *******************************************/
 
     private fun startSmoothCountdown(seconds: Int, videoDurationSec: Int) {
         val totalDuration = seconds * 1000L
@@ -397,6 +370,7 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() {
                 binding.countText.text = ""
                 isRecording = false
+                startRecordingBorderAnimation(videoDurationSec * 1000L)
                 startOrStopRecording()
                 Handler(Looper.getMainLooper()).postDelayed({
                     isRecording = true
@@ -405,9 +379,32 @@ class MainActivity : AppCompatActivity() {
             }
         }.start()
     }
+
+    private fun startRecordingBorderAnimation(durationMillis: Long) {
+        val animator = ValueAnimator.ofFloat(1f, 0f).apply {
+            duration = durationMillis
+            interpolator = LinearInterpolator()
+            addUpdateListener {
+                val value = it.animatedValue as Float
+                binding.recordingBorderView.setProgress(value)
+            }
+        }
+        animator.start()
+    }
+
+    /****************************************************************************************************/
+    /******************************************** stop Dialog ********************************************/
+
+    private fun stopRecordingBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val bindingStopRecord = BottomSheetStopRecordingBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(bindingStopRecord.root)
+        bottomSheetDialog.show()
+    }
 }
 
-/******************************************** using camerax ********************************************/
+    /****************************************************************************************************/
+    /******************************************** using camerax *****************************************/
 
 //    private var videoCapture: VideoCapture<Recorder>? = null
 //    private var currentRecording: Recording? = null
@@ -492,8 +489,5 @@ class MainActivity : AppCompatActivity() {
 //                }
 //            }
 //    }
-
-/******************************************** video preview ********************************************/
-
 
 

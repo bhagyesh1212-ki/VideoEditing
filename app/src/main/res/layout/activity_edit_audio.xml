@@ -75,10 +75,11 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgStopMusic"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_start" />
+                android:src="@drawable/ic_stop" />
 
             <SeekBar
                 android:layout_width="0dp"
@@ -104,8 +105,8 @@
             android:layout_height="41dp"
             android:layout_below="@+id/lyManageSong"
             android:layout_marginTop="13dp"
-            app:marker_color="@color/white"
             android:background="@drawable/bg_wavebar"
+            app:marker_color="@color/white"
             app:marker_text_color="@color/white"
             app:marker_text_padding="2dp"
             app:marker_text_size="12dp"
@@ -129,32 +130,32 @@
             android:id="@+id/handleStart"
             android:layout_width="14dp"
             android:layout_height="40dp"
-            android:layout_marginTop="13dp"
-            android:padding="3dp"
-            android:src="@drawable/ic_leftmove"
             android:layout_below="@+id/lyManageSong"
             android:layout_gravity="start"
-            android:background="@drawable/bg_leftmovehandle" />
+            android:layout_marginTop="13dp"
+            android:background="@drawable/bg_leftmovehandle"
+            android:padding="3dp"
+            android:src="@drawable/ic_leftmove" />
 
         <ImageView
             android:id="@+id/handleEnd"
-            android:layout_marginTop="13dp"
-            android:layout_below="@+id/lyManageSong"
             android:layout_width="14dp"
-            android:padding="3dp"
-            android:src="@drawable/ic_rightmove"
             android:layout_height="40dp"
+            android:layout_below="@+id/lyManageSong"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/bg_rightmovehandle"/>
+            android:layout_marginTop="13dp"
+            android:background="@drawable/bg_rightmovehandle"
+            android:padding="3dp"
+            android:src="@drawable/ic_rightmove" />
 
         <ImageView
             android:id="@+id/playhead"
             android:layout_width="2dp"
-            android:layout_marginTop="13dp"
-            android:layout_below="@+id/lyManageSong"
             android:layout_height="40dp"
+            android:layout_below="@+id/lyManageSong"
             android:layout_gravity="start"
-            android:background="@color/white"/>
+            android:layout_marginTop="13dp"
+            android:background="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"

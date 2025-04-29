@@ -26,3 +26,7 @@ rootProject.name = "VideoEditingApp"
 include(":app")
 include(":lib")
 include(":AXVideoTimelineView")
+include(":animators")
+include(":library")
+include(":instagramvideobutton")
+include(":cameravideobuttonlib")

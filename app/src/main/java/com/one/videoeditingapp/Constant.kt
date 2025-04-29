@@ -53,14 +53,11 @@ object Constant {
                 Uri.parse("android.resource://com.one.videoeditingapp/${R.raw.song_two}")
             )
         )
-
         return listOne
     }
 
     fun category_two(): ArrayList<MusicModel> {
         val listOne = ArrayList<MusicModel>()
-
-
 
         listOne.add(
             MusicModel(
@@ -92,7 +89,6 @@ object Constant {
                 Uri.parse("android.resource://com.one.videoeditingapp/${R.raw.song_one}")
             )
         )
-
         return listOne
     }
 

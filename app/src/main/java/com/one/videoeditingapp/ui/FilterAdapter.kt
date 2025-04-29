@@ -10,6 +10,7 @@ import com.one.videoeditingapp.model.FilterModel
 class FilterAdapter(
     val context: Context,
     private val listFilter: List<FilterModel>
+
 ) : RecyclerView.Adapter<FilterAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterAdapter.ViewHolder {
@@ -20,6 +21,7 @@ class FilterAdapter(
     override fun onBindViewHolder(holder: FilterAdapter.ViewHolder, position: Int) {
         val filterModel = listFilter.get(position)
         holder.binding.imgFilter.setImageResource(filterModel.imgFilter)
+
     }
 
     override fun getItemCount(): Int {
