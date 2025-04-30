@@ -21,13 +21,13 @@
         android:layout_marginTop="40dp"
         android:src="@drawable/ic_close" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/lyEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginHorizontal="22dp"
         android:layout_marginTop="150dp"
-        android:orientation="vertical">
+        android:layout_marginEnd="22dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgMusic"
@@ -39,19 +39,54 @@
             android:id="@+id/imgFilter"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_below="@id/imgMusic"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_stars" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/ic_speed" />
+        <RelativeLayout
+            android:id="@+id/speed"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/imgFilter"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgSpeed"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_speed" />
+
+            <RelativeLayout
+                android:id="@+id/lySelectedSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgSpeedSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_speed_bg" />
+
+                <TextView
+                    android:id="@+id/tvSpeedSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="@string/_5x"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
+            </RelativeLayout>
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgWatch"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_below="@id/speed"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_time" />
 
@@ -59,9 +94,20 @@
             android:id="@+id/imgFlash"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_below="@id/imgWatch"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_flashoff" />
-    </LinearLayout>
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="228dp"
+        android:layout_toStartOf="@+id/lyEdit"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <FrameLayout
         android:id="@+id/countDown"

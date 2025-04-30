@@ -12,6 +12,7 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
@@ -43,6 +44,7 @@ import com.one.videoeditingapp.databinding.BottomSheetDialogBinding
 import com.one.videoeditingapp.databinding.BottomSheetStopRecordingBinding
 import com.one.videoeditingapp.model.CountDownModel
 import com.one.videoeditingapp.model.FilterModel
+import com.one.videoeditingapp.model.SpeedModel
 import com.yarolegovich.discretescrollview.DiscreteScrollView
 import com.yarolegovich.discretescrollview.transform.Pivot
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer
@@ -56,11 +58,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var glSurfaceView: GLSurfaceView
     private var isRecording = false
     private var listFilter: ArrayList<FilterModel>? = null
+    private var listSpeed: ArrayList<SpeedModel>? = null
     private var lastRecordedFile: File? = null
     private var isFilterOpen: Boolean = false
     private var listCountDown: ArrayList<CountDownModel>? = null
     private var isRotateToSelfie: Boolean = false
     private var isFlashOn: Boolean = false
+    private var isSpeedShow: Boolean = false
+    private var selectedPositionSpeed = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,11 +74,13 @@ class MainActivity : AppCompatActivity() {
 
         requestStoragePermissions()
         setFilterRecycler()
+        setUpSpeedRecycler()
 
         binding.tvNext.setOnClickListener {
             val videoPath = lastRecordedFile?.absolutePath ?: return@setOnClickListener
             val i = Intent(this, VideoEditingActivity::class.java)
             i.putExtra("videoPath", videoPath)
+            i.putExtra("selectedSpeed",selectedPositionSpeed)
             startActivity(i)
         }
 
@@ -134,6 +141,15 @@ class MainActivity : AppCompatActivity() {
         binding.imgClose.setOnClickListener {
             stopRecordingBottomSheet()
         }
+
+        binding.speed.setOnClickListener {
+            isSpeedShow = !isSpeedShow
+            if (isSpeedShow) {
+                binding.rcvSpeed.visibility = View.VISIBLE
+            } else {
+                binding.rcvSpeed.visibility = View.GONE
+            }
+        }
     }
 
     /******************************************** function **************************************************/
@@ -191,7 +207,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /************************************************************************************************************************/
+    /********************************************************************************************************/
+    /******************************************** Filter rcv set ********************************************/
+
+    private fun setUpSpeedRecycler() {
+        listSpeed = ArrayList<SpeedModel>()
+        listSpeed!!.add(SpeedModel(".5x"))
+        listSpeed!!.add(SpeedModel(".4x"))
+        listSpeed!!.add(SpeedModel("3x"))
+        listSpeed!!.add(SpeedModel("2x"))
+
+        val adapter = SpeedAdapter(this, listSpeed!!, object : SpeedAdapter.OnClickListener {
+            override fun onClick(position: Int) {
+                binding.rcvSpeed.visibility = View.GONE
+                selectedPositionSpeed = position
+                if (position != -1) {
+                    setSpeedSelected()
+                }
+            }
+        })
+        binding.rcvSpeed.adapter = adapter
+    }
+
+    private fun setSpeedSelected() {
+        val speedText = listSpeed!!.get(selectedPositionSpeed).speed
+        binding.imgSpeed.visibility = View.GONE
+        binding.lySelectedSpeed.visibility = View.VISIBLE
+        binding.tvSpeedSelected.text = speedText
+        isSpeedShow = false
+    }
+
+    /*************************************************************************************************************************/
     /******************************************** permission for camera and audio ********************************************/
 
     private fun requestStoragePermissions() {
@@ -258,11 +304,14 @@ class MainActivity : AppCompatActivity() {
             (glSurfaceView.parent as ViewGroup).removeView(glSurfaceView)
         }
 
+         val lensFacingBack = LensFacing.BACK;
+         val lensFacingFront = LensFacing.FRONT;
+
         binding.previewView.removeAllViews()
         binding.previewView.addView(glSurfaceView)
 
         gpuCameraRecorder = GPUCameraRecorderBuilder(this, glSurfaceView)
-            .lensFacing(if (isRotateToSelfie) LensFacing.FRONT else LensFacing.BACK)
+            .lensFacing(if (isRotateToSelfie) lensFacingFront else lensFacingBack)
             .videoSize(720, 1280)
             .recordNoFilter(false)
             .cameraRecordListener(object : CameraRecordListener {
@@ -286,6 +335,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             .build()
+
         gpuCameraRecorder.setFilter(GlFilter())
     }
 
@@ -403,8 +453,8 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-    /****************************************************************************************************/
-    /******************************************** using camerax *****************************************/
+/****************************************************************************************************/
+/******************************************** using camerax *****************************************/
 
 //    private var videoCapture: VideoCapture<Recorder>? = null
 //    private var currentRecording: Recording? = null

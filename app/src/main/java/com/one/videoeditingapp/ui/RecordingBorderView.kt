@@ -43,13 +43,6 @@ class RecordingBorderView @JvmOverloads constructor(
 
         path.reset()
 
-//        START FROM TOP-RIGHT corner and move clockwise
-//        path.moveTo(right, top)
-//        path.lineTo(left, top) // Right
-//        path.lineTo(left, bottom)  // Bottom
-//        path.lineTo(right, bottom)     // Left
-//        path.lineTo(right, top)    // Top
-
         path.addRoundRect(
             left, top, right, bottom,
             cornerRadius, cornerRadius,
@@ -70,7 +63,12 @@ class RecordingBorderView @JvmOverloads constructor(
         animatedPath.reset()
         pathMeasure.getSegment(0f, segmentLength, animatedPath, true)
 
+        canvas.save()
+        canvas.rotate(90f, width / 2f, height / 2f)
+
         canvas.drawPath(animatedPath, paint)
+
+        canvas.restore()
     }
 }
 
